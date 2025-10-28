@@ -1,0 +1,24 @@
+services:
+  code-server:
+    image: ghcr.io/coder/code-server:latest
+    entrypoint: /usr/local/bin/init.sh
+    environment:
+      PASSWORD: password
+      DOCKER_USER: joe
+    user: "1000:1000"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./init.sh:/usr/local/bin/init.sh
+      - ./src/:/home/src/
+      - coder:/home/coder
+  accelerator-lab:
+    build: ./src/
+    image: camptocamp/openmetrics-accelerator-lab:latest
+    volumes:
+      - ./src/:/usr/src/app/
+    ports:
+      - 5678:5678
+      - 5000:5000
+volumes:
+  coder:

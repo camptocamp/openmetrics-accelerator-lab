@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Particle Accelerator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+  <h1>🌀 Particle Accelerator Control</h1>
+  <button onclick="fetch('/start')">Start</button>
+  <button onclick="fetch('/stop')">Stop</button>
+
+  <canvas id="accelerator" resize></canvas>
+
+  <script>
+    // --- Paper.js setup ---
+    paper.setup('accelerator');
+    const circle = new paper.Path.Circle(paper.view.center, 100);
+    circle.strokeColor = 'white';
+    const dot = new paper.Path.Circle(paper.view.center.add(new paper.Point(100, 0)), 10);
+    dot.fillColor = 'yellow';
+    let angle = 0;
+    let angularSpeed = 0; // dépend du backend
+
+    // --- Animation loop ---
+    paper.view.onFrame = (event) => {
+      angle += angularSpeed * event.delta; // degrés/s
+      const rad = (angle * Math.PI) / 180;
+      dot.position = new paper.Point(
+        paper.view.center.x + 100 * Math.cos(rad),
+        paper.view.center.y + 100 * Math.sin(rad)
+      );
+    };
+
+    // --- Poll backend toutes les 200ms ---
+    async function updateSpeed() {
+      try {
+        const res = await fetch('/state');
+        const data = await res.json();
+        angularSpeed = data.speed_percent_c / 5; // échelle visuelle
+      } catch (err) {
+        console.error('Erreur de fetch:', err);
+      }
+      setTimeout(updateSpeed, 200);
+    }
+    updateSpeed();
+  </script>
+</body>
+</html>
