@@ -15,6 +15,9 @@ services:
   accelerator-lab:
     build: ./src/
     image: camptocamp/openmetrics-accelerator-lab:latest
+    environment:
+      FLASK_ENV: development
+      FLASK_DEBUG: "1"
     volumes:
       - ./src/:/usr/src/app/
     ports:
