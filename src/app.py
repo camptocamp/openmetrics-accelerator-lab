@@ -11,20 +11,42 @@ rf_phase_angle = Gauge("rf_cavity_phase_angle", "RF cavity phase angle (degrees)
 
 # --- Variables internes ---
 running = False
-phase = 0.0
-CALIBRATION_FACTOR = 0.8  # bug volontaire à corriger
+has_failed = False
+start_time = None
+
+CALIBRATION_FACTOR = 0.8  # bug volontaire (à corriger à 1.0)
+BASE_FREQ = 2 * math.pi * 0.5  # fréquence d’oscillation du champ RF
+ENERGY_MAX = 6.8  # TeV
 speed_percent = 0.0
+phase_drift = 0.0
 
 def accelerator_loop():
-    global phase, speed_percent
+    global running, has_failed, start_time, speed_percent, phase_drift
     while True:
         if running:
-            t = time.time()
-            rf_phase_angle.set((t * 60) % 360)
-            beam_energy = max(0, 6.8 * math.sin(math.radians((t * 60) * CALIBRATION_FACTOR)))
-            beam_energy_tev.set(beam_energy)
-            speed_percent = beam_energy / 6.8 * 100
+            t = time.time() - start_time
+
+            # Phase réelle du champ RF (le “kick” attendu)
+            rf_phase = t * BASE_FREQ
+            rf_phase_angle.set(math.degrees(rf_phase) % 360)
+
+            # Drift : si calibration mauvaise, déphasage croissant
+            phase_drift += (CALIBRATION_FACTOR - 1.0) * 0.02
+            effective_phase = rf_phase + phase_drift
+
+            # L’énergie chute quand le champ est en opposition de phase
+            field_alignment = math.cos(effective_phase)
+            energy = max(0, ENERGY_MAX * field_alignment)
+            beam_energy_tev.set(energy)
+
+            # Convertir en vitesse relative à c
+            speed_percent = max(0, (energy / ENERGY_MAX) * 100)
             particle_speed_percent_c.set(speed_percent)
+
+            # Condition d’arrêt : le faisceau s’effondre
+            if energy < 0.05:
+                running = False
+                has_failed = True
         time.sleep(0.2)
 
 threading.Thread(target=accelerator_loop, daemon=True).start()
@@ -35,20 +57,22 @@ def index():
 
 @app.route("/start")
 def start():
-    global running
-    running = True
-    return jsonify({"status": "started"})
-
-@app.route("/stop")
-def stop():
-    global running
-    running = False
-    return jsonify({"status": "stopped"})
+    global running, has_failed, start_time, phase_drift
+    if not running and not has_failed:
+        running = True
+        start_time = time.time()
+        phase_drift = 0.0
+        return jsonify({"status": "started"})
+    elif has_failed:
+        return jsonify({"status": "failed"})
+    else:
+        return jsonify({"status": "running"})
 
 @app.route("/state")
 def state():
     return jsonify({
         "running": running,
+        "failed": has_failed,
         "speed_percent_c": speed_percent
     })
 

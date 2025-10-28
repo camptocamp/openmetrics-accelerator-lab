@@ -1,50 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <title>Particle Accelerator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-
 <body>
   <h1>🌀 Particle Accelerator Control</h1>
-  <button onclick="fetch('/start')">Start</button>
-  <button onclick="fetch('/stop')">Stop</button>
-
+  <button id="startBtn" onclick="startRun()">Start</button>
+  <p id="status">Status: READY</p>
   <canvas id="accelerator" resize></canvas>
 
   <script>
-    // --- Paper.js setup ---
     paper.setup('accelerator');
     const circle = new paper.Path.Circle(paper.view.center, 100);
     circle.strokeColor = 'white';
     const dot = new paper.Path.Circle(paper.view.center.add(new paper.Point(100, 0)), 10);
     dot.fillColor = 'yellow';
-    let angle = 0;
-    let angularSpeed = 0; // dépend du backend
 
-    // --- Animation loop ---
+    let angle = 0;
+    let angularSpeed = 0;
+
     paper.view.onFrame = (event) => {
-      angle += angularSpeed * event.delta; // degrés/s
-      const rad = (angle * Math.PI) / 180;
+      angle += angularSpeed * event.delta;
+      const rad = angle * Math.PI / 180;
       dot.position = new paper.Point(
         paper.view.center.x + 100 * Math.cos(rad),
         paper.view.center.y + 100 * Math.sin(rad)
       );
     };
 
-    // --- Poll backend toutes les 200ms ---
-    async function updateSpeed() {
+    async function startRun() {
+      const res = await fetch('/start');
+      const data = await res.json();
+      if (data.status === "started") {
+        document.getElementById("status").textContent = "Status: RUNNING";
+        document.getElementById("startBtn").disabled = true;
+      } else if (data.status === "failed") {
+        document.getElementById("status").textContent = "Status: FAIL";
+      }
+    }
+
+    async function updateState() {
       try {
         const res = await fetch('/state');
         const data = await res.json();
-        angularSpeed = data.speed_percent_c / 5; // échelle visuelle
-      } catch (err) {
-        console.error('Erreur de fetch:', err);
+        angularSpeed = data.speed_percent_c / 5;
+        if (data.failed) {
+          document.getElementById("status").textContent = "Status: FAIL";
+        } else if (data.running) {
+          document.getElementById("status").textContent = "Status: RUNNING";
+        }
+      } catch (e) {
+        console.error(e);
       }
-      setTimeout(updateSpeed, 200);
+      setTimeout(updateState, 200);
     }
-    updateSpeed();
+    updateState();
   </script>
 </body>
 </html>
