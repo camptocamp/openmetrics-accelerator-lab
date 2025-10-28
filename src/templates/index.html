@@ -10,54 +10,8 @@
   <h1>🌀 Particle Accelerator Control</h1>
   <button id="startBtn" onclick="startRun()">Start</button>
   <p id="status">Status: READY</p>
+  <p id="duration">Duration: 0.0s</p>
   <canvas id="accelerator" resize></canvas>
-
-  <script>
-    paper.setup('accelerator');
-    const circle = new paper.Path.Circle(paper.view.center, 100);
-    circle.strokeColor = 'white';
-    const dot = new paper.Path.Circle(paper.view.center.add(new paper.Point(100, 0)), 10);
-    dot.fillColor = 'yellow';
-
-    let angle = 0;
-    let angularSpeed = 0;
-
-    paper.view.onFrame = (event) => {
-      angle += angularSpeed * event.delta;
-      const rad = angle * Math.PI / 180;
-      dot.position = new paper.Point(
-        paper.view.center.x + 100 * Math.cos(rad),
-        paper.view.center.y + 100 * Math.sin(rad)
-      );
-    };
-
-    async function startRun() {
-      const res = await fetch('/start');
-      const data = await res.json();
-      if (data.status === "started") {
-        document.getElementById("status").textContent = "Status: RUNNING";
-        document.getElementById("startBtn").disabled = true;
-      } else if (data.status === "failed") {
-        document.getElementById("status").textContent = "Status: FAIL";
-      }
-    }
-
-    async function updateState() {
-      try {
-        const res = await fetch('/state');
-        const data = await res.json();
-        angularSpeed = data.speed_percent_c / 5;
-        if (data.failed) {
-          document.getElementById("status").textContent = "Status: FAIL";
-        } else if (data.running) {
-          document.getElementById("status").textContent = "Status: RUNNING";
-        }
-      } catch (e) {
-        console.error(e);
-      }
-      setTimeout(updateState, 200);
-    }
-    updateState();
-  </script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

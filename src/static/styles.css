@@ -8,8 +8,8 @@ body {
 canvas {
   background: #000;
   margin-top: 20px;
-  width: 80%;
-  height: 80%;
+  width: 600px;
+  height: 500px;
 }
 
 button {
