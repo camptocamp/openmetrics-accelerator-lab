@@ -12,6 +12,7 @@ dot.fillColor = 'yellow';
 
 // --- Simulation state ---
 let angle = 0;                // particule angular position
+let last_angle = 0;           // previous particule position
 let speed = 1;                // angular speed
 let lastKickTime = 0;
 let startTime = null;
@@ -29,7 +30,6 @@ let btn = document.getElementById("btn");
 */
 let statusCode = 0; // global status
 
-const KICK_ZONE_ANGLE = 0;    // 0° = position 3h
 const KICK_THRESHOLD = 80;    // overload threshold
 const TIMEOUT_LIMIT = 30;     // max experience duration
 
@@ -103,23 +103,19 @@ paper.view.onFrame = async (event) => {
       return;
     }
 
-    // Déplacement du point
-    angle += speed * event.delta * 60; // vitesse adaptative
+    // Move particule
+    last_angle = angle;
+    angle += speed * event.delta * 60; 
+    angle = ((angle % 360) + 360) % 360;
     const rad = (angle * Math.PI) / 180;
     const x = paper.view.center.x + CIRCLE_SIZE * Math.cos(rad);
     const y = paper.view.center.y + CIRCLE_SIZE * Math.sin(rad);
     dot.position = new paper.Point(x, y);
 
-    // Vérifier la zone de kick
-    const angleMod = ((angle % 360) + 360) % 360;
-    const nearKickZone = Math.abs(angleMod - KICK_ZONE_ANGLE) < 2; // ±2°
-
-    // TODO change logic : if (angleMod > KICK_ZONE_ANGLE) && !kick_done
-    if (nearKickZone && event.time - lastKickTime > 0.5) {
-      lastKickTime = event.time;
+    if (last_angle > angle) {
       const kick = await getKickPower();
       console.log("Kick:", kick);
-      speed += kick / 50; // influence du kick sur la vitesse
+      speed += kick / 50;
       if(speed * SPEED_FACTOR >= SPEED_OF_LIGHT){
         speed = (SPEED_OF_LIGHT * 0.999999991) / SPEED_FACTOR;
         statusCode = 2
