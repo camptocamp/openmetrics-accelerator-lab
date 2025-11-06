@@ -17,6 +17,7 @@ let lastKickTime = 0;
 let startTime = null;
 let durationDisplay = document.getElementById("duration");
 let statusDisplay = document.getElementById("status");
+let btn = document.getElementById("btn");
 
 // --- Status codes ---
 /*
@@ -65,7 +66,26 @@ async function startExperiment() {
   angle = 0;
   statusCode = 1; // running
   statusDisplay.textContent = "Status: RUNNING";
-  document.getElementById("startBtn").disabled = true;
+  btn.textContent = "Abort";
+  postState();
+}
+
+async function stopExperiment(reason, status) {
+  startTime = Date.now();
+  speed = 0;
+  angle = 0;
+  statusCode = status;
+  statusDisplay.textContent = "Status: " + reason;
+  btn.textContent = "Start";
+  postState();
+}
+
+async function resetExperiment() {
+  statusCode = 0; // Stopped
+  angle = 0;
+  speed = 0;
+  statusDisplay.textContent = "Status: READY";
+  btn.textContent = "Start";
   postState();
 }
 
@@ -79,11 +99,7 @@ paper.view.onFrame = async (event) => {
 
     // Timeout
     if (elapsed >= TIMEOUT_LIMIT) {
-      experimentRunning = false;
-      statusCode = 3; // timeout
-      speed = 0;
-      statusDisplay.textContent = "Status: TIMEOUT";
-      await postState();
+      stopExperiment("TIMEOUT", 4);
       return;
     }
 
@@ -98,6 +114,7 @@ paper.view.onFrame = async (event) => {
     const angleMod = ((angle % 360) + 360) % 360;
     const nearKickZone = Math.abs(angleMod - KICK_ZONE_ANGLE) < 2; // ±2°
 
+    // TODO change logic : if (angleMod > KICK_ZONE_ANGLE) && !kick_done
     if (nearKickZone && event.time - lastKickTime > 0.5) {
       lastKickTime = event.time;
       const kick = await getKickPower();
@@ -105,14 +122,13 @@ paper.view.onFrame = async (event) => {
       speed += kick / 50; // influence du kick sur la vitesse
       if(speed * SPEED_FACTOR >= SPEED_OF_LIGHT){
         speed = (SPEED_OF_LIGHT * 0.999999991) / SPEED_FACTOR;
+        statusCode = 2
+        await postState();
         statusDisplay.textContent = "Status: SUCCESS !";
       }
 
       if (kick >= KICK_THRESHOLD) {
-        statusCode = 2; // overloaded
-        speed = 0;
-        statusDisplay.textContent = "Status: OVERLOADED";
-        await postState();
+        stopExperiment("OVERLOADED", 3);
         return;
       }
     }
@@ -140,5 +156,11 @@ async function startAbort() {
     case 0:
     case 3:
     case 4:
-  await startExperiment();
+      await startExperiment();
+      break;
+    case 1:
+    case 2:
+      await stopExperiment("ABORT", 0);
+      break;
+  }
 }
