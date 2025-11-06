@@ -4,6 +4,12 @@ paper.setup('accelerator');
 const CIRCLE_SIZE = 200;
 const SPEED_FACTOR = 24982704; // Used to convert internal speed to m/s
 const SPEED_OF_LIGHT = 299792458;
+// --- Status codes ---
+const STATUS_STOPPED    = 0;
+const STATUS_RUNNING    = 1;
+const STATUS_SUCCESS    = 2;
+const STATUS_OVERLOADED = 3;
+const STATUS_TIMEOUT    = 4;
 
 const circle = new paper.Path.Circle(paper.view.center, CIRCLE_SIZE);
 circle.strokeColor = 'white';
@@ -19,18 +25,9 @@ let startTime = null;
 let durationDisplay = document.getElementById("duration");
 let statusDisplay = document.getElementById("status");
 let btn = document.getElementById("btn");
+let statusCode = STATUS_STOPPED; // global status
 
-// --- Status codes ---
-/*
-  0 = stopped
-  1 = running
-  2 = success
-  3 = overloaded
-  4 = timeout
-*/
-let statusCode = 0; // global status
-
-const KICK_THRESHOLD = 80;    // overload threshold
+const KICK_THRESHOLD = 50;    // overload threshold
 const TIMEOUT_LIMIT = 30;     // max experience duration
 
 // --- Backend interaction ---
@@ -55,6 +52,7 @@ async function postState() {
         speed: speed * SPEED_FACTOR
       })
     });
+    console.log("status=" + statusCode + " speed=" + speed);
   } catch (err) {
     console.error("Erreur POST /state:", err);
   }
@@ -64,14 +62,13 @@ async function startExperiment() {
   startTime = Date.now();
   speed = 1;
   angle = 0;
-  statusCode = 1; // running
+  statusCode = STATUS_RUNNING;
   statusDisplay.textContent = "Status: RUNNING";
   btn.textContent = "Abort";
   postState();
 }
 
 async function stopExperiment(reason, status) {
-  startTime = Date.now();
   speed = 0;
   angle = 0;
   statusCode = status;
@@ -80,18 +77,9 @@ async function stopExperiment(reason, status) {
   postState();
 }
 
-async function resetExperiment() {
-  statusCode = 0; // Stopped
-  angle = 0;
-  speed = 0;
-  statusDisplay.textContent = "Status: READY";
-  btn.textContent = "Start";
-  postState();
-}
-
 // --- Boucle principale ---
 paper.view.onFrame = async (event) => {
-  if (statusCode == 1 || statusCode == 2){
+  if (statusCode == STATUS_RUNNING || statusCode == STATUS_SUCCESS){
 
     // Temps écoulé
     const elapsed = (Date.now() - startTime) / 1000;
@@ -99,19 +87,22 @@ paper.view.onFrame = async (event) => {
 
     // Timeout
     if (elapsed >= TIMEOUT_LIMIT) {
-      stopExperiment("TIMEOUT", 4);
+      if(statusCode == STATUS_SUCCESS)
+        stopExperiment("SUCCESS", STATUS_STOPPED);
+      else
+        stopExperiment("TIMEOUT", STATUS_TIMEOUT);
       return;
     }
 
     // Move particule
     last_angle = angle;
-    angle += speed * event.delta * 60; 
-    angle = ((angle % 360) + 360) % 360;
-    const rad = (angle * Math.PI) / 180;
-    const x = paper.view.center.x + CIRCLE_SIZE * Math.cos(rad);
-    const y = paper.view.center.y + CIRCLE_SIZE * Math.sin(rad);
+    angle += speed * event.delta; 
+    angle = angle % (2*Math.PI);
+    const x = paper.view.center.x + CIRCLE_SIZE * Math.cos(angle);
+    const y = paper.view.center.y + CIRCLE_SIZE * Math.sin(angle);
     dot.position = new paper.Point(x, y);
 
+    // Apply Kick if in the kick zone
     if (last_angle > angle) {
       const kick = await getKickPower();
       console.log("Kick:", kick);
@@ -149,13 +140,13 @@ setInterval(() => {
 */
 async function startAbort() {
   switch(statusCode){
-    case 0:
-    case 3:
-    case 4:
+    case STATUS_STOPPED:
+    case STATUS_OVERLOADED:
+    case STATUS_TIMEOUT:
       await startExperiment();
       break;
-    case 1:
-    case 2:
+    case STATUS_RUNNING:
+    case STATUS_SUCCESS:
       await stopExperiment("ABORT", 0);
       break;
   }
