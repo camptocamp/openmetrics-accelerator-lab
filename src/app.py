@@ -28,8 +28,13 @@ def update_state():
     status = int(data.get("status", 0))
     speed = float(data.get("speed", 0.0))
 
+    # Update metrics values    
     beam_speed.set(speed)
     accelerator_state.set(status)
+    if(status == 1): # status=running
+        kick_power.set(KICK_POWER)
+    else:
+        kick_power.set(0)
 
     print(f"[STATE] status={status}, speed={speed:.2f}")
     return jsonify({"message": "state updated", "status": status}), 200
