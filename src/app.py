@@ -11,7 +11,7 @@ accelerator_state = Gauge("accelerator_state", "Accelerator state: 0=stopped, 1=
 
 # --- Internal state ---
 state = 0
-KICK_POWER = 68 # arbitrary unit, should be stay in [0;100]
+KICK_POWER = 27 # arbitrary unit, should be stay in [0;100]
 
 @app.route("/")
 def index():

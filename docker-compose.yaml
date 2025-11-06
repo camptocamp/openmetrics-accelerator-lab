@@ -3,7 +3,6 @@ services:
     image: ghcr.io/coder/code-server:latest
     entrypoint: /usr/local/bin/init.sh
     environment:
-      PASSWORD: password
       DOCKER_USER: joe
     user: "1000:1000"
     ports:
@@ -15,6 +14,7 @@ services:
   accelerator-lab:
     build: ./src/
     image: camptocamp/openmetrics-accelerator-lab:latest
+    restart: always
     environment:
       FLASK_ENV: development
       FLASK_DEBUG: "1"
