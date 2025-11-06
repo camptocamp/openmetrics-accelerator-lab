@@ -11,8 +11,8 @@ const dot = new paper.Path.Circle(paper.view.center.add(new paper.Point(CIRCLE_S
 dot.fillColor = 'yellow';
 
 // --- Simulation state ---
-let angle = 0;                // position du point
-let speed = 1;                // vitesse angulaire
+let angle = 0;                // particule angular position
+let speed = 1;                // angular speed
 let lastKickTime = 0;
 let startTime = null;
 let durationDisplay = document.getElementById("duration");
@@ -22,14 +22,15 @@ let statusDisplay = document.getElementById("status");
 /*
   0 = stopped
   1 = running
-  2 = overloaded
-  3 = timeout
+  2 = success
+  3 = overloaded
+  4 = timeout
 */
 let statusCode = 0; // global status
 
 const KICK_ZONE_ANGLE = 0;    // 0° = position 3h
-const KICK_THRESHOLD = 80;    // surcharge si kick >= 80
-const TIMEOUT_LIMIT = 30;     // secondes max d’expérience
+const KICK_THRESHOLD = 80;    // overload threshold
+const TIMEOUT_LIMIT = 30;     // max experience duration
 
 // --- Backend interaction ---
 async function getKickPower() {
@@ -70,7 +71,7 @@ async function startExperiment() {
 
 // --- Boucle principale ---
 paper.view.onFrame = async (event) => {
-  if (statusCode == 1){
+  if (statusCode == 1 || statusCode == 2){
 
     // Temps écoulé
     const elapsed = (Date.now() - startTime) / 1000;
@@ -125,7 +126,19 @@ setInterval(() => {
   }
 }, 200);
 
-// --- Start button handler ---
-async function startRun() {
+// --- Button handler ---
+// --- Status codes ---
+/*
+  0 = stopped
+  1 = running
+  2 = success
+  3 = overloaded
+  4 = timeout
+*/
+async function startAbort() {
+  switch(statusCode){
+    case 0:
+    case 3:
+    case 4:
   await startExperiment();
 }

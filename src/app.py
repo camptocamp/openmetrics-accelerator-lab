@@ -7,7 +7,7 @@ app = Flask(__name__)
 # --- Prometheus metrics ---
 kick_power = Gauge("kick_power", "Kick power")
 beam_speed = Gauge("beam_speed_km_s", "Current beam speed in km/s")
-accelerator_state = Gauge("accelerator_state", "Accelerator state: 0=stopped, 1=running, 2=overloaded, 3=timeout")
+accelerator_state = Gauge("accelerator_state", "Accelerator state: 0=stopped, 1=running, 2=success, 3=overloaded, 4=timeout")
 
 # --- Internal state ---
 state = 0
@@ -33,14 +33,6 @@ def update_state():
 
     print(f"[STATE] status={status}, speed={speed:.2f}")
     return jsonify({"message": "state updated", "status": status}), 200
-
-@app.route("/state")
-def state():
-    return jsonify({
-        "running": running,
-        "failed": failed,
-        "speed_percent_c": current_speed
-    })
 
 @app.route("/metrics")
 def metrics():
