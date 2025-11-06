@@ -14,7 +14,6 @@ services:
   accelerator-lab:
     build: ./src/
     image: camptocamp/openmetrics-accelerator-lab:latest
-    restart: always
     environment:
       FLASK_ENV: development
       FLASK_DEBUG: "1"
@@ -23,9 +22,9 @@ services:
     ports:
       - 5678:5678
       - 5000:5000
+    restart: unless-stopped
   prometheus:
     image: prom/prometheus:latest
-    container_name: prometheus
     ports:
       - "9090:9090"
     volumes:
@@ -33,7 +32,6 @@ services:
     restart: unless-stopped
   grafana:
     image: grafana/grafana:latest
-    container_name: grafana
     ports:
       - "3000:3000"
     environment:
