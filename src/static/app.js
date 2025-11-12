@@ -81,17 +81,19 @@ let waves = [];
 function triggerWave(origin) {
   const radius = 10;
 
-  // création de l'arc (un 1/8 de cercle)
+  // arc start
   const from = new paper.Point({
     length: radius,
     angle: 45
   }).add(origin);
 
+  // middle of the arc
   const through = new paper.Point({
     length: radius,
-    angle: 90 // milieu de l’arc, vers le bas
+    angle: 90
   }).add(origin);
 
+  // ends of the arc
   const to = new paper.Point({
     length: radius,
     angle: 135
@@ -99,21 +101,21 @@ function triggerWave(origin) {
 
   const arc = new paper.Path.Arc(from, through, to);
   arc.strokeColor = 'red';
-  arc.strokeWidth = 2;
+  arc.strokeWidth = 4;
   arc.opacity = 1;
 
   waves.push({ shape: arc, age: 0 });
 }
 
-// --- Boucle principale ---
+// Main display loop
 paper.view.onFrame = async (event) => {
   if (statusCode == STATUS_RUNNING || statusCode == STATUS_SUCCESS){
 
-    // Temps écoulé
+    // Compute experience duration
     const elapsed = (Date.now() - startTime) / 1000;
     durationDisplay.textContent = `Duration: ${elapsed.toFixed(1)}s`;
 
-    // Timeout
+    // Check for a timeout
     if (elapsed >= TIMEOUT_LIMIT) {
       if(statusCode == STATUS_SUCCESS)
         stopExperiment("SUCCESS", STATUS_STOPPED);
@@ -157,7 +159,9 @@ paper.view.onFrame = async (event) => {
       w.age++;
 
       // expansion and fading
-      w.shape.scale(1.05, w.shape.position);
+    const x = paper.view.center.x + CIRCLE_SIZE * Math.cos(angle);
+      tt = new paper.Point(paper.view.center.x + CIRCLE_SIZE, paper.view.center.y - (2 * w.age));
+      w.shape.scale(1.05, tt);
       w.shape.opacity = Math.max(1 - w.age / 30, 0);
 
       if (w.age > 30) {
