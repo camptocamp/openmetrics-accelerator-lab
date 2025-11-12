@@ -52,7 +52,6 @@ async function postState() {
         speed: speed * SPEED_FACTOR
       })
     });
-    console.log("status=" + statusCode + " speed=" + speed);
   } catch (err) {
     console.error("Erreur POST /state:", err);
   }
@@ -75,6 +74,35 @@ async function stopExperiment(reason, status) {
   statusDisplay.textContent = "Status: " + reason;
   btn.textContent = "Start";
   postState();
+}
+
+let waves = [];
+
+function triggerWave(origin) {
+  const radius = 10;
+
+  // création de l'arc (un 1/8 de cercle)
+  const from = new paper.Point({
+    length: radius,
+    angle: 45
+  }).add(origin);
+
+  const through = new paper.Point({
+    length: radius,
+    angle: 90 // milieu de l’arc, vers le bas
+  }).add(origin);
+
+  const to = new paper.Point({
+    length: radius,
+    angle: 135
+  }).add(origin);
+
+  const arc = new paper.Path.Arc(from, through, to);
+  arc.strokeColor = 'red';
+  arc.strokeWidth = 2;
+  arc.opacity = 1;
+
+  waves.push({ shape: arc, age: 0 });
 }
 
 // --- Boucle principale ---
@@ -112,11 +140,29 @@ paper.view.onFrame = async (event) => {
         statusCode = 2
         await postState();
         statusDisplay.textContent = "Status: SUCCESS !";
+      } else {
+        // Objective is not reach, display a kick 
+        triggerWave(new paper.Point(paper.view.center.x + CIRCLE_SIZE, paper.view.center.y));
       }
 
       if (kick >= KICK_THRESHOLD) {
         stopExperiment("OVERLOADED", 3);
         return;
+      }
+    }
+
+    // Arc update
+    for (let i = waves.length - 1; i >= 0; i--) {
+      const w = waves[i];
+      w.age++;
+
+      // expansion and fading
+      w.shape.scale(1.05, w.shape.position);
+      w.shape.opacity = Math.max(1 - w.age / 30, 0);
+
+      if (w.age > 30) {
+        w.shape.remove();
+        waves.splice(i, 1);
       }
     }
   }
