@@ -2,6 +2,9 @@
 paper.setup('accelerator');
 
 const CIRCLE_SIZE = 200;
+const PARTICULE_SIZE = 10;
+const KICK_ZONE_WIDTH = 50;
+const KICK_ZONE_HEIGHT = 80;
 const SPEED_FACTOR = 24982704; // Used to convert internal speed to m/s
 const SPEED_OF_LIGHT = 299792458;
 // --- Status codes ---
@@ -13,8 +16,42 @@ const STATUS_TIMEOUT    = 4;
 
 const circle = new paper.Path.Circle(paper.view.center, CIRCLE_SIZE);
 circle.strokeColor = 'white';
-const dot = new paper.Path.Circle(paper.view.center.add(new paper.Point(CIRCLE_SIZE, 0)), 10);
+const dot = new paper.Path.Circle(paper.view.center.add(new paper.Point(CIRCLE_SIZE, 0)), PARTICULE_SIZE);
 dot.fillColor = 'yellow';
+const kickRect = new paper.Rectangle(
+  [
+    paper.view.center.x + CIRCLE_SIZE - (KICK_ZONE_WIDTH / 2),
+    paper.view.center.y - (KICK_ZONE_HEIGHT / 2) 
+   ], [KICK_ZONE_WIDTH, KICK_ZONE_HEIGHT]);
+const kickZone = new paper.Path.Rectangle(kickRect, 6);
+kickZone.fillColor = '#6f4040ff';
+kickZone.sendToBack();
+const kickLineLeft = new paper.Path.Line(
+  new paper.Point(
+    paper.view.center.x + CIRCLE_SIZE - (PARTICULE_SIZE),
+    paper.view.center.y - PARTICULE_SIZE
+  ),
+  new paper.Point(
+    paper.view.center.x + CIRCLE_SIZE - (PARTICULE_SIZE),
+    paper.view.center.y + PARTICULE_SIZE
+  )
+);
+kickLineLeft.strokeColor = 'red';
+kickLineLeft.strokeWidth = 4;
+kickLineLeft.insertAbove(kickZone);
+const kickLineRight = new paper.Path.Line(
+  new paper.Point(
+    paper.view.center.x + CIRCLE_SIZE + (PARTICULE_SIZE),
+    paper.view.center.y - PARTICULE_SIZE
+  ),
+  new paper.Point(
+    paper.view.center.x + CIRCLE_SIZE + (PARTICULE_SIZE),
+    paper.view.center.y + PARTICULE_SIZE
+  )
+);
+kickLineRight.strokeColor = 'red';
+kickLineRight.strokeWidth = 4;
+kickLineRight.insertAbove(kickZone);
 
 // --- Simulation state ---
 let angle = 0;                // particule angular position
