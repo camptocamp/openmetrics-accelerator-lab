@@ -1,0 +1,22 @@
+---
+name: Build Lab images
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-push:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build
+        run: docker build -t ghcr.io/camptocamp/openmetrics-accelerator-lab:latest ./src/
+
+      - name: Build
+        run: docker push ghcr.io/camptocamp/openmetrics-accelerator-lab:latest
