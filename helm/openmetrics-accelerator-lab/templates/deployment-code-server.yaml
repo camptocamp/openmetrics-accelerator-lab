@@ -1,0 +1,93 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openmetrics-accelerator-lab.fullname" . }}-code-server
+  labels:
+    {{- include "openmetrics-accelerator-lab.labels" . | nindent 4 }}
+    app.kubernetes.io/component: code-server
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "openmetrics-accelerator-lab.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: code-server
+  template:
+    metadata:
+      labels:
+        {{- include "openmetrics-accelerator-lab.labels" . | nindent 8 }}
+        app.kubernetes.io/component: code-server
+    spec:
+      initContainers:
+        - name: wait-for-git
+          image: busybox
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo -n "Waiting for lab git clone..." && \
+              until [ -f /mnt/app/.git-clone-done ]; do sleep 2; done && \
+              echo "OK"
+              echo -n "Setup volume permissions..."
+              chown -R 1000:1000 /home/coder
+              echo "OK"
+          volumeMounts:
+            - name: src
+              mountPath: /mnt
+            - name: code-server
+              mountPath: /home/coder
+        - name: install-extensions
+          image: {{ .Values.codeServer.image.repository }}:{{ .Values.codeServer.image.tag }}
+          command:
+            - /usr/bin/code-server
+            - --install-extension
+            - ms-python.python
+            - --install-extension
+            - ms-python.debugpy
+            - --install-extension
+            - ms-kubernetes-tools.vscode-kubernetes-tools
+          volumeMounts:
+            - name: code-server
+              mountPath: /home/coder
+      containers:
+        - name: code-server
+          image: {{ .Values.codeServer.image.repository }}:{{ .Values.codeServer.image.tag }}
+          command:
+            - dumb-init
+            - /usr/bin/code-server
+            - --bind-addr
+            - 0.0.0.0:8080
+            - --auth
+            - none
+            - --user-data-dir
+            - /home/coder/.local/share/code-server
+            - --extensions-dir
+            - /home/coder/.local/share/code-server/extensions
+            - /mnt/src/app/src/
+          volumeMounts:
+            - name: src
+              mountPath: /mnt/src
+            - name: code-server
+              mountPath: /home/coder
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+      volumes:
+        - name: src
+          persistentVolumeClaim:
+            claimName: {{ include "openmetrics-accelerator-lab.fullname" . }}-src
+        - name: code-server
+          persistentVolumeClaim:
+            claimName: {{ include "openmetrics-accelerator-lab.fullname" . }}-code-server

@@ -1,0 +1,70 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openmetrics-accelerator-lab.fullname" . }}-lab
+  labels:
+    {{- include "openmetrics-accelerator-lab.labels" . | nindent 4 }}
+    app.kubernetes.io/component: lab
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "openmetrics-accelerator-lab.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: lab
+  template:
+    metadata:
+      labels:
+        {{- include "openmetrics-accelerator-lab.labels" . | nindent 8 }}
+        app.kubernetes.io/component: lab
+    spec:
+      initContainers:
+        - name: git-clone
+          image: alpine/git
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              # Clone repo in a 'app' sub folder
+              if [ ! -d /mnt/src/app/ ]; then
+                git clone {{ .Values.repoUrl }} /mnt/src/app/
+                chown -R 1000:1000 /mnt/src/app/
+                touch /mnt/src/app/.git-clone-done
+              fi
+          volumeMounts:
+            - name: src
+              mountPath: /mnt/src/
+      containers:
+        - name: lab
+          image: {{ .Values.acceleratorLab.image.repository }}:{{ .Values.acceleratorLab.image.tag }}
+          args: [ "/mnt/src/app/src/app.py" ]
+          env:
+            - name: "FLASK_ENV"
+              value: "development"
+            - name: "FLASK_DEBUG"
+              value: "1"
+          volumeMounts:
+            - name: src
+              mountPath: /mnt/src/
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+            - name: debug
+              containerPort: 5678
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+      volumes:
+        - name: src
+          persistentVolumeClaim:
+            claimName: {{ include "openmetrics-accelerator-lab.fullname" . }}-src

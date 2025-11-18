@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openmetrics-accelerator-lab.fullname" . }}-shell
+  labels:
+    {{- include "openmetrics-accelerator-lab.labels" . | nindent 4 }}
+    app.kubernetes.io/component: shell
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "openmetrics-accelerator-lab.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: shell
+  template:
+    metadata:
+      labels:
+        {{- include "openmetrics-accelerator-lab.labels" . | nindent 8 }}
+        app.kubernetes.io/component: shell
+    spec:
+      containers:
+        - name: shell
+          image: ubuntu
+          tty: true
+          volumeMounts:
+            - name: src
+              mountPath: /mnt/src
+            - name: code-server
+              mountPath: /mnt/coder
+      volumes:
+        - name: src
+          persistentVolumeClaim:
+            claimName: {{ include "openmetrics-accelerator-lab.fullname" . }}-src
+        - name: code-server
+          persistentVolumeClaim:
+            claimName: {{ include "openmetrics-accelerator-lab.fullname" . }}-code-server

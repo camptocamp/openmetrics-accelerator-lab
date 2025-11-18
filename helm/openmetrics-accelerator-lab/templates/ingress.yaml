@@ -1,0 +1,46 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "openmetrics-accelerator-lab.fullname" . }}
+  labels:
+    {{- include "openmetrics-accelerator-lab.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        - lab.{{ .Values.ingress.baseDomain }}
+        - vscode.{{ .Values.ingress.baseDomain }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - host: lab.{{ .Values.ingress.baseDomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "openmetrics-accelerator-lab.fullname" . }}-lab
+                port:
+                  name: http
+    - host: vscode.{{ .Values.ingress.baseDomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "openmetrics-accelerator-lab.fullname" . }}-code-server
+                port:
+                  name: http
+{{- end }}

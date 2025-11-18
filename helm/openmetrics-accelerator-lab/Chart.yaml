@@ -1,0 +1,4 @@
+apiVersion: v2
+name: openmetrics-accelerator-lab
+description: A Python based particule accelerator for Kubernetes
+version: 0.1.0

@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openmetrics-accelerator-lab.fullname" . }}-src
+  labels:
+    {{- include "openmetrics-accelerator-lab.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openmetrics-accelerator-lab.fullname" . }}-code-server
+  labels:
+    {{- include "openmetrics-accelerator-lab.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
