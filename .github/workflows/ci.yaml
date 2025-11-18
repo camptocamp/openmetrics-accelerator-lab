@@ -20,3 +20,19 @@ jobs:
 
       - name: Build
         run: docker push ghcr.io/camptocamp/openmetrics-accelerator-lab:latest
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: helm login
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: helm package
+        run: |
+          helm package helm/openmetrics-accelerator-lab/ --version 0.1.0
+          ls -l
+
+      - name: helm push
+        run: |
+          helm push openmetrics-accelerator-lab-0.1.0.tgz oci://ghcr.io/${{ github.repository_owner }}
