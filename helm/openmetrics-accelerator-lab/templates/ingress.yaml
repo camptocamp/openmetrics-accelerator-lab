@@ -43,4 +43,14 @@ spec:
                 name: {{ include "openmetrics-accelerator-lab.fullname" . }}-code-server
                 port:
                   name: http
+    - host: prometheus.{{ .Values.ingress.baseDomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "openmetrics-accelerator-lab.fullname" . }}-prometheus
+                port:
+                  name: http
 {{- end }}

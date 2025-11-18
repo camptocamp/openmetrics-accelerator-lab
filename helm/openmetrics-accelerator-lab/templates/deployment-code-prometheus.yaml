@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openmetrics-accelerator-lab.fullname" . }}-prometheus
+  labels:
+    {{- include "openmetrics-accelerator-lab.labels" . | nindent 4 }}
+    app.kubernetes.io/component: prometheus
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "openmetrics-accelerator-lab.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: prometheus
+  template:
+    metadata:
+      labels:
+        {{- include "openmetrics-accelerator-lab.labels" . | nindent 8 }}
+        app.kubernetes.io/component: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: {{ .Values.prometheus.image.repository }}:{{ .Values.prometheus.image.tag }}
+          ports:
+            - name: http
+              containerPort: 9090
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          volumeMounts:
+          - name: config
+            mountPath: "/etc/prometheus/"
+            readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "openmetrics-accelerator-lab.fullname" . }}-prometheus
