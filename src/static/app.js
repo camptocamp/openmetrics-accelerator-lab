@@ -17,7 +17,10 @@ const STATUS_TIMEOUT    = 4;
 const circle = new paper.Path.Circle(paper.view.center, CIRCLE_SIZE);
 circle.strokeColor = 'white';
 const dot = new paper.Path.Circle(paper.view.center.add(new paper.Point(CIRCLE_SIZE, 0)), PARTICULE_SIZE);
-dot.fillColor = 'yellow';
+dot.fillColor = '#869f82';
+// #869f82 Vert
+// #9b8981 Marron
+// #ca4b60 Rouge
 const kickRect = new paper.Rectangle(
   [
     paper.view.center.x + CIRCLE_SIZE - (KICK_ZONE_WIDTH / 2),
@@ -100,6 +103,7 @@ async function startExperiment() {
   angle = 0;
   statusCode = STATUS_RUNNING;
   statusDisplay.textContent = "Status: RUNNING";
+  statusDisplay.style.backgroundColor = "#00000000"; // green
   btn.textContent = "Abort";
   postState();
 }
@@ -109,6 +113,11 @@ async function stopExperiment(reason, status) {
   angle = 0;
   statusCode = status;
   statusDisplay.textContent = "Status: " + reason;
+  if(reason == "SUCCESS !"){
+    statusDisplay.style.backgroundColor = "#5d6e5a"; // green
+  } else if(reason != "ABORT"){
+    statusDisplay.style.backgroundColor = "#6c2733"; // red
+  }
   btn.textContent = "Start";
   postState();
 }
@@ -179,6 +188,7 @@ paper.view.onFrame = async (event) => {
         statusCode = 2
         await postState();
         statusDisplay.textContent = "Status: SUCCESS !";
+        statusDisplay.style.backgroundColor = "#5d6e5a"; // green
       } else {
         // Objective is not reach, display a kick 
         triggerWave(new paper.Point(paper.view.center.x + CIRCLE_SIZE, paper.view.center.y));
