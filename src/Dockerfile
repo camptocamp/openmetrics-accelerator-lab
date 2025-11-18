@@ -18,5 +18,5 @@ COPY . .
 
 EXPOSE 5000 5678
 
-ENTRYPOINT ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678"]
+ENTRYPOINT ["debugpy", "--listen", "0.0.0.0:5678"]
 CMD ["app.py"]
