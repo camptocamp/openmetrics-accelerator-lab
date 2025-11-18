@@ -164,7 +164,7 @@ paper.view.onFrame = async (event) => {
     // Check for a timeout
     if (elapsed >= TIMEOUT_LIMIT) {
       if(statusCode == STATUS_SUCCESS)
-        stopExperiment("SUCCESS", STATUS_STOPPED);
+        stopExperiment("SUCCESS !", STATUS_STOPPED);
       else
         stopExperiment("TIMEOUT", STATUS_TIMEOUT);
       return;
