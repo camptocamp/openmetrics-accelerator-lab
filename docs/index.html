@@ -1,1 +1,325 @@
-<h1>Welcome</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KCD Suisse Romande | Particle Accelerator Workshop</title>
+    <style>
+        :root {
+            /* KCD / CNCF Inspired Palette */
+            --bg-color: #0b132b; /* Deep Navy */
+            --card-bg: #1c2541;   /* Lighter Navy */
+            --text-color: #edf2f4;
+            --accent-color: #5bc0be; /* Teal */
+            --highlight-color: #ef476f; /* Pink/Red for accents */
+            --code-bg: #000000;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #1c2541 0%, #0b132b 100%);
+            border-bottom: 4px solid var(--accent-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            margin-top: 40px;
+            border-bottom: 1px solid #3a506b;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: var(--highlight-color);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            font-weight: 300;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .card.warning {
+            border-left-color: var(--highlight-color);
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #333;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            color: #72efdd;
+        }
+
+        .inline-code {
+            background-color: rgba(255,255,255,0.1);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: var(--font-mono);
+            color: var(--accent-color);
+        }
+
+        /* Links */
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--highlight-color);
+            text-decoration: underline;
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+
+        /* Steps Timeline */
+        .step {
+            display: flex;
+            margin-bottom: 30px;
+        }
+
+        .step-number {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            font-size: 0.9rem;
+            color: #8d99ae;
+            border-top: 1px solid #3a506b;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>KCD Suisse Romande</h1>
+            <div class="subtitle">Workshop: Observability-Driven Development</div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <section>
+            <p>Welcome, Engineers. Today we aren't just deploying containers; we are building a feedback loop. We will deploy a simulated particle accelerator to a Kubernetes cluster and use OpenMetrics to tune its performance in real-time. Follow the protocol below to initialize your environment.</p>
+        </section>
+
+        <section>
+            <h2>Phase 1: Cluster Initialization</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Get Authenticated</h3>
+                    <p>We are creating a dedicated Kubernetes cluster for you. Please wait for the workshop instructor to distribute your unique <strong>Authentication Link</strong>.</p>
+                    <p><em>(Keep this link open, you will need the credentials shortly).</em></p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Install Kubectl</h3>
+                    <p>While your cluster is provisioning, ensure you have the CLI tool installed locally.</p>
+                    <p><a href="https://kubernetes.io/docs/tasks/tools/" target="_blank">🔗 Official Guide: Install Tools | Kubernetes</a></p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Configure Access</h3>
+                    <p>Once your cluster is ready, download the <code>kubeconfig</code> file from the dashboard provided in Step 1.</p>
+                    <pre><code># Linux/Mac
+export KUBECONFIG=~/Downloads/kubeconfig.yaml
+
+# Windows PowerShell
+$env:KUBECONFIG="C:\Users\YourUser\Downloads\kubeconfig.yaml"</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Validate Connection</h3>
+                    <p>Verify you have a heartbeat from the control plane.</p>
+                    <pre><code>kubectl get nodes
+kubectl get pods -A</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Phase 2: The Mission Brief</h2>
+            
+            <div class="card">
+                <h3 style="margin-top:0;">⚛️ Openmetrics Particle Accelerator Lab</h3>
+                <p>
+                    This project is a small experimental “lab” designed to demonstrate how easily 
+                    OpenMetrics metrics can be integrated into a business application for 
+                    Prometheus monitoring.
+                </p>
+                <p>
+                    It simulates a very simple particle accelerator where a particle 
+                    (represented by a moving ball) travels around a ring and receives periodic 
+                    “kicks” to accelerate and reach (almost) the speed of light.
+                </p>
+                <ul>
+                    <li>If the kick is too strong, the system <strong>overloads</strong>. 💥</li>
+                    <li>If the experiment runs too long, it automatically <strong>shuts down</strong>. 🛑</li>
+                </ul>
+                <p>
+                    The goal is to tune the <span class="inline-code">KICK_POWER</span> variable to reach the optimal speed 
+                    without triggering an overload.
+                </p>
+                <p>
+                    The project illustrates how operational metrics can be embedded directly into 
+                    an application’s logic — allowing developers to observe its internal state and 
+                    performance through Prometheus.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Phase 3: Execution</h2>
+
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3>Deploy the Lab</h3>
+                    <p>Using the UI Dashboard provided in step 1, select <strong>"Create Lab"</strong>. This will deploy the manifest containing the Particle Accelerator, Prometheus, Grafana, and the IDE.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">6</div>
+                <div class="step-content">
+                    <h3>Establish Uplink (Port Forward)</h3>
+                    <p>To access the internal services securely from your localhost, open a terminal and run the following commands (keep this terminal open):</p>
+                    
+                    <pre><code># Example: Forwarding the Application UI
+kubectl port-forward svc/particle-app 5000:5000
+
+# Example: Forwarding Grafana (Open a new terminal tab)
+kubectl port-forward svc/grafana 3000:3000
+
+# Example: Forwarding VSCode IDE (Open a new terminal tab)
+kubectl port-forward svc/code-server 8080:8080</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">7</div>
+                <div class="step-content">
+                    <h3>Engage the Experiment</h3>
+                    <p>With tunnels established, your local browser is now the command center.</p>
+                    
+                    <h4>The Workflow:</h4>
+                    <ol>
+                        <li><strong>Launch App:</strong> Open <a href="http://localhost:5000" target="_blank">http://localhost:5000</a> to see the accelerator.</li>
+                        <li><strong>Start Experiment:</strong> Click "Start". Watch the particle accelerate.</li>
+                        <li><strong>Analyze Telemetry:</strong> Open <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> (Grafana) to visualize the velocity and stability.</li>
+                        <li><strong>Tune Logic:</strong> Open <a href="http://localhost:8080" target="_blank">http://localhost:8080</a> (VSCode).
+                            <ul>
+                                <li>Navigate to <code>app.py</code>.</li>
+                                <li>Adjust the <code>KICK_POWER</code> parameter.</li>
+                                <li>Save the file (Flask auto-reloads).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Iterate:</strong> Re-run the experiment and observe if you achieved stable light speed or caused a meltdown.</li>
+                    </ol>
+                    <p>This loop demonstrates how easily metrics collection and visualization can be integrated into a business application, enabling fast iteration and observability-driven development.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="card warning">
+                <h3>📚 Further Reading</h3>
+                <p>Want to dive deeper into how this works under the hood?</p>
+                <p>
+                    <a href="https://dev.to/camptocamp-ops/intro-to-prometheus-for-developers-675" target="_blank">
+                        👉 Blogpost: Introduction to Prometheus for Developers
+                    </a>
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>KCD Suisse Romande Workshop | <a href="https://community.cncf.io/events/details/cncf-kcd-suisse-romande-presents-kcd-suisse-romande/" target="_blank">Event Details</a></p>
+    </footer>
+
+</body>
+</html>
+
