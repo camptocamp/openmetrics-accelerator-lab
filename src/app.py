@@ -18,7 +18,7 @@ def index():
     return render_template("index.html")
 
 @app.route("/kick_power")
-def start():
+def kick():
     global KICK_POWER
     return jsonify({"kick_power": KICK_POWER})
 
