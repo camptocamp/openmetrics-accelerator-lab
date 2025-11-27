@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 0,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -36,7 +36,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -104,6 +104,22 @@
                 "value": 0
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Beam Energy"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "ev"
+              }
+            ]
           }
         ]
       },
@@ -123,7 +139,7 @@
         },
         "tooltip": {
           "hideZeros": false,
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -168,6 +184,20 @@
           "legendFormat": "Success",
           "range": true,
           "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "beam_energy_mev*1000000",
+          "hide": false,
+          "instant": false,
+          "interval": "1s",
+          "legendFormat": "Beam Energy",
+          "range": true,
+          "refId": "D"
         }
       ],
       "title": "Beam speed",
@@ -348,7 +378,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "hideZeros": false,
@@ -366,7 +396,7 @@
           "editorMode": "code",
           "expr": "kick_power",
           "interval": "1s",
-          "legendFormat": "__auto",
+          "legendFormat": "Kick Power",
           "range": true,
           "refId": "A"
         }
@@ -404,5 +434,5 @@
   "timezone": "browser",
   "title": "Openmetrics Accelerator Lab",
   "uid": "ad98gpx",
-  "version": 17
+  "version": 1
 }
