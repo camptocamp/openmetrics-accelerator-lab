@@ -120,6 +120,24 @@
                 "value": "ev"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Speed of light"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
           }
         ]
       },
