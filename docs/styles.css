@@ -121,20 +121,7 @@ li {
 .step {
     display: flex;
     margin-bottom: 30px;
-}
-
-.step-number {
-    background-color: var(--accent-color);
-    color: var(--bg-color);
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    margin-right: 15px;
-    flex-shrink: 0;
+    margin-left: 40px;
 }
 
 .step-content {
@@ -148,4 +135,34 @@ footer {
     color: #8d99ae;
     border-top: 1px solid #3a506b;
     margin-top: 50px;
+}
+.code-block {
+    position: relative;
+}
+
+.copy-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.copy-button:hover {
+    background: #2568d8;
+}
+
+.links-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.links-list li {
+    margin: 0.4rem 0;
 }

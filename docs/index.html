@@ -22,53 +22,103 @@
         </section>
 
         <section>
-            <h2>Phase 1: Cluster Initialization</h2>
-            
+            <h2>01 Bootstrap &ndash; Create the Kubernetes Cluster</h2>
+
             <div class="step">
-                <div class="step-number">1</div>
                 <div class="step-content">
                     <h3>Get Authenticated</h3>
-                    <p>We are creating a dedicated Kubernetes cluster for you. Please wait for the workshop instructor to distribute your unique <strong>Authentication Link</strong>.</p>
-                    <p><em>(Keep this link open, you will need the credentials shortly).</em></p>
+                    <p>You should have received a <em>small paper card</em> containing your personal <strong>login</strong> and
+                        <strong>password</strong>.</p>
+                    <p>Use these credentials to sign in at:
+                        <a href="https://ze2zz7yjlt.ks.private.cloud.swisscom.ch/" target="_blank">https://ze2zz7yjlt.ks.private.cloud.swisscom.ch/</a>
+                    </p>
+                    <p>Use <em>Login with Demo OIDC</em>.</p>
+                    <p><em>Keep this page open — you will need it for the next steps.</em></p>
                 </div>
             </div>
-
+            
             <div class="step">
-                <div class="step-number">2</div>
                 <div class="step-content">
-                    <h3>Install Kubectl</h3>
-                    <p>While your cluster is provisioning, ensure you have the CLI tool installed locally.</p>
-                    <p><a href="https://kubernetes.io/docs/tasks/tools/" target="_blank">🔗 Official Guide: Install Tools | Kubernetes</a></p>
-                </div>
-            </div>
+                    <h3>Create Your Kubernetes Cluster</h3>
 
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <h3>Configure Access</h3>
-                    <p>Once your cluster is ready, download the <code>kubeconfig</code> file from the dashboard provided in Step 1.</p>
-                    <pre><code># Linux/Mac
-export KUBECONFIG=~/Downloads/kubeconfig.yaml
+                    <p>The cluster will be created using the web-based wizard provided for the workshop.</p>
 
-# Windows PowerShell
-$env:KUBECONFIG="C:\Users\YourUser\Downloads\kubeconfig.yaml"</code></pre>
-                </div>
-            </div>
+                    <p>
+                        All the steps for this phase are already documented in the workshop slides.
+                        Please download the PDF and follow the instructions from 
+                        <strong>slide 16 to slide 37</strong>, which walk you through the entire
+                        cluster creation process.
+                    </p>
 
-            <div class="step">
-                <div class="step-number">4</div>
-                <div class="step-content">
-                    <h3>Validate Connection</h3>
-                    <p>Verify you have a heartbeat from the control plane.</p>
-                    <pre><code>kubectl get nodes
-kubectl get pods -A</code></pre>
+                    <p><a class="download-link" href="slides.pdf" download>📄 Download the Workshop Slides (PDF)</a></p>
+
+                    <p>Once your cluster is fully created, return to this page to continue with the next steps.</p>
                 </div>
             </div>
         </section>
 
         <section>
-            <h2>Phase 2: The Mission Brief</h2>
-            
+            <h2>02 Init &ndash; Install tools</h2>
+
+            <div class="step">
+                <div class="step-content">
+                    <h3>Install Kubectl</h3>
+
+                    <p>Follow the official Kubernetes instructions depending on your OS:</p>
+                    <p>
+                        <a href="https://kubernetes.io/docs/tasks/tools/" target="_blank">
+                            🔗 Official Guide – Install kubectl
+                        </a>
+                    </p>
+
+                    <div class="code-block" data-command="kubectl version --client">
+                        <button class="copy-button">Copy</button>
+                        <pre><code># Test your installation
+kubectl version --client</code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-content">
+                    <h3>Configure API Access</h3>
+                    <p>Use the <code>kubeconfig</code> file you downloaded in Step 01.</p>
+
+                    <pre><code># Linux / macOS
+export KUBECONFIG=~/Downloads/kubeconfig-xxxxxxxxxx.yaml
+
+# Windows PowerShell
+$env:KUBECONFIG="C:\Users\YourUser\Downloads\kubeconfig-xxxxxxxxxx.yaml"</code></pre>
+
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-content">
+                    <h3>Validate Access</h3>
+                    <div class="code-block" data-command="kubectl get pods -A">
+                        <button class="copy-button">Copy</button>
+                        <pre><code>$ kubectl get pods -A
+NAMESPACE       NAME                                    READY   STATUS    RESTARTS   AGE
+ingress-nginx   ingress-nginx-controller-549886-cpg2d   1/1     Running   0          6h42m
+ingress-nginx   ingress-nginx-controller-549886-plbz5   1/1     Running   0          6h42m
+kube-system     cilium-m7wf6                            1/1     Running   0          10h
+kube-system     cilium-operator-74668d995-hrpjh         1/1     Running   0          10h
+kube-system     coredns-5d6489bb45-n4rrx                1/1     Running   0          10h
+kube-system     coredns-5d6489bb45-v6mt2                1/1     Running   0          10h
+kube-system     envoy-agent-jndgw                       2/2     Running   0          10h
+kube-system     hubble-relay-795945d857-xgqvw           1/1     Running   0          10h
+kube-system     hubble-ui-556747b9c9-q6q29              2/2     Running   0          10h
+kube-system     konnectivity-agent-7f7d9474dd-4pxjv     1/1     Running   0          10h
+kube-system     konnectivity-agent-7f7d9474dd-gkp5s     1/1     Running   0          10h
+kube-system     metrics-server-7bd6766f9d-5grc8         1/1     Running   0          10h
+…</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>04 Run &ndash; Deploy the lab and play with the metrics</h2>
+
             <div class="card">
                 <h3 style="margin-top:0;">⚛️ Openmetrics Particle Accelerator Lab</h3>
                 <p>
@@ -95,57 +145,116 @@ kubectl get pods -A</code></pre>
                     performance through Prometheus.
                 </p>
             </div>
-        </section>
-
-        <section>
-            <h2>Phase 3: Execution</h2>
 
             <div class="step">
-                <div class="step-number">5</div>
-                <div class="step-content">
-                    <h3>Deploy the Lab</h3>
-                    <p>Using the UI Dashboard provided in step 1, select <strong>"Create Lab"</strong>. This will deploy the manifest containing the Particle Accelerator, Prometheus, Grafana, and the IDE.</p>
-                </div>
-            </div>
-
-            <div class="step">
-                <div class="step-number">6</div>
                 <div class="step-content">
                     <h3>Establish Uplink (Port Forward)</h3>
-                    <p>To access the internal services securely from your localhost, open a terminal and run the following commands (keep this terminal open):</p>
-                    
-                    <pre><code># Example: Forwarding the Application UI
-kubectl port-forward svc/particle-app 5000:5000
 
-# Example: Forwarding Grafana (Open a new terminal tab)
-kubectl port-forward svc/grafana 3000:3000
+                    <p>
+                        To access all internal services from your local machine, you only need
+                        <strong>a single port-forward</strong> to the <strong>Ingress Controller</strong>.
+                    </p>
 
-# Example: Forwarding VSCode IDE (Open a new terminal tab)
-kubectl port-forward svc/code-server 8080:8080</code></pre>
+                    <p>
+                        Before you run <strong>any</strong> kubectl command, make sure your
+                        <code>KUBECONFIG</code> environment variable is correctly set.
+                    </p>
+
+                    <div class="code-block">
+                        <pre><code># Linux / macOS
+export KUBECONFIG=~/Downloads/kubeconfig-xxxxxxxxxx.yaml</code></pre>
+                    </div>
+                    <div class="code-block">
+            <pre><code># Windows PowerShell
+$env:KUBECONFIG="C:\Users\YourUser\Downloads\kubeconfig-xxxxxxxxxx.yaml"</code></pre>
+                    </div>
+
+                    <p>
+                        Once <strong>KUBECONFIG is set</strong>, you can establish the uplink.
+                        This port-forward gives local access to all workshop interfaces.
+                    </p>
+
+                    <div class="code-block" data-command="kubectl -n ingress-nginx port-forward deploy/ingress-nginx-ingress-nginx-controller 8080:80">
+                        <button class="copy-button">Copy</button>
+                        <pre><code>$ kubectl -n ingress-nginx \
+    port-forward deploy/ingress-nginx-ingress-nginx-controller \
+    8080:80</code></pre>
+                    </div>
+
+                    <p>
+                        <strong>Important:</strong> Keep this terminal open for the entire workshop.
+                        If the command stops, all upstream access to the lab will be interrupted.
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="step">
+                <div class="step-content">
+                    <h3>The Feedback Loop</h3>
+
+                    <p>Your environment includes four web interfaces you will use during the workshop:</p>
+
+                    <ul>
+                        <li>🚀 Particle Lab UI: <a href="http://lab.127.0.0.1.nip.io:8080" target="_blank">http://lab.127.0.0.1.nip.io:8080</a></li>
+                        <li>📊 Grafana Dashboards: <a href="http://grafana.127.0.0.1.nip.io:8080" target="_blank">http://grafana.127.0.0.1.nip.io:8080</a></li>
+                        <li>💻 VSCode (browser IDE): <a href="http://vscode.127.0.0.1.nip.io:8080" target="_blank">http://vscode.127.0.0.1.nip.io:8080</a></li>
+                    </ul>
+
+                    <h4>Restart the Lab (CLI)</h4>
+                    <p>
+                        In case something goes wrong during the workshop, you can restart the lab
+                        using the following command:
+                    </p>
+
+                    <div class="code-block" data-command="kubectl rollout restart deployment -n openmetrics-accelerator-lab -l app.kubernetes.io/component=lab">
+                        <button class="copy-button">Copy</button>
+                    <pre><code>$ kubectl rollout restart deployment \
+    -n openmetrics-accelerator-lab \
+    -l app.kubernetes.io/component=lab</code></pre>
+                    </div>
+
+                    <h4>Restart the Lab (CLI)</h4>
+                    <p>You can also restart the lab directly from the CLI:</p>
+
+                    <div class="code-block" data-command="kubectl rollout restart deployment -n openmetrics-accelerator-lab -l app.kubernetes.io/component=lab">
+                        <button class="copy-button">Copy</button>
+                    <pre><code>$ kubectl rollout restart deployment \
+    -n openmetrics-accelerator-lab \
+    -l app.kubernetes.io/component=lab</code></pre>
+                    </div>
                 </div>
             </div>
 
             <div class="step">
-                <div class="step-number">7</div>
                 <div class="step-content">
-                    <h3>Engage the Experiment</h3>
-                    <p>With tunnels established, your local browser is now the command center.</p>
-                    
-                    <h4>The Workflow:</h4>
-                    <ol>
-                        <li><strong>Launch App:</strong> Open <a href="http://localhost:5000" target="_blank">http://localhost:5000</a> to see the accelerator.</li>
-                        <li><strong>Start Experiment:</strong> Click "Start". Watch the particle accelerate.</li>
-                        <li><strong>Analyze Telemetry:</strong> Open <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> (Grafana) to visualize the velocity and stability.</li>
-                        <li><strong>Tune Logic:</strong> Open <a href="http://localhost:8080" target="_blank">http://localhost:8080</a> (VSCode).
-                            <ul>
-                                <li>Navigate to <code>app.py</code>.</li>
-                                <li>Adjust the <code>KICK_POWER</code> parameter.</li>
-                                <li>Save the file (Flask auto-reloads).</li>
-                            </ul>
+                    <h3>Extra Step – Implement a new metric</h3>
+                    <p>In <code>app.py</code>, you can add a <strong>kick_count</strong> counter:</p>
+
+                    <pre><code>from prometheus_client import Counter
+
+kick_count = Counter('kick_count', 'Kick Count')
+
+@app.route('/kick_power')
+def kick():
+    ...
+    kick_count.inc()
+    ...
+            </code></pre>
+
+                    <p>Useful references:</p>
+                    <ul>
+                        <li>📘 Client library docs (Counter):  
+                            <a target="_blank" href="https://prometheus.github.io/client_python/instrumenting/counter/">
+                                https://prometheus.github.io/client_python/instrumenting/counter/
+                            </a>
                         </li>
-                        <li><strong>Iterate:</strong> Re-run the experiment and observe if you achieved stable light speed or caused a meltdown.</li>
-                    </ol>
-                    <p>This loop demonstrates how easily metrics collection and visualization can be integrated into a business application, enabling fast iteration and observability-driven development.</p>
+                        <li>🔍 Query your metric in Prometheus:  
+                            <a target="_blank" href="http://prometheus.127.0.0.1.nip.io:8080/query?g0.expr=kick_count">
+                                http://prometheus.127.0.0.1.nip.io:8080/query?g0.expr=kick_count
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -153,21 +262,70 @@ kubectl port-forward svc/code-server 8080:8080</code></pre>
         <section>
             <div class="card warning">
                 <h3>📚 Further Reading</h3>
-                <p>Want to dive deeper into how this works under the hood?</p>
-                <p>
-                    <a href="https://dev.to/camptocamp-ops/intro-to-prometheus-for-developers-675" target="_blank">
-                        👉 Blogpost: Introduction to Prometheus for Developers
-                    </a>
-                </p>
+                <p>Curious to explore more about Prometheus, metrics, and application observability?</p>
+
+                <ul class="links-list">
+                    <li>
+                        <a href="https://dev.to/camptocamp-ops/intro-to-prometheus-for-developers-675" target="_blank">
+                            👉 Introduction to Prometheus for Developers
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://dev.to/camptocamp-ops/implement-prometheus-metrics-in-a-flask-application-p18" target="_blank">
+                            👉 Implement Prometheus Metrics in a Flask Application
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://dev.to/camptocamp-ops/testing-application-monitoring-locally-with-a-docker-composition-47hn" target="_blank">
+                            👉 Testing Application Monitoring Locally with Docker Composition
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://dev.to/camptocamp-ops/integrate-an-application-with-prometheus-operator-and-package-with-a-helm-chart-1159" target="_blank">
+                            👉 Integrate an App with Prometheus Operator & Package with Helm
+                        </a>
+                    </li>
+                </ul>
             </div>
         </section>
+
+        <section>
+            <h2>05 Discover &ndash; Observability tools using EBPF</h2>
+
+            <div class="step">
+                <div class="step-content">
+                    <h3>Observe Using eBPF</h3>
+
+                    <p>To explore system activity using eBPF, run a debug session with Inspektor Gadget:</p>
+
+                    <pre><code>kubectl debug --profile=sysadmin $(kubectl get node -o name) -ti \
+    --image=ghcr.io/inspektor-gadget/ig:latest -- \
+    ig run trace_exec:latest \
+    --filter k8s.namespace==openmetrics-accelerator-lab
+            </code></pre>
+
+                    <p>This launches a privileged ephemeral debug pod and attaches the <code>trace_exec</code> gadget.</p>
+                </div>
+            </div>
 
     </div>
 
     <footer>
         <p>KCD Suisse Romande Workshop | <a href="https://community.cncf.io/events/details/cncf-kcd-suisse-romande-presents-kcd-suisse-romande/" target="_blank">Event Details</a></p>
     </footer>
+    <script>
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('copy-button')) return;
 
+        const block = e.target.closest('.code-block');
+        const command = block.dataset.command;
+
+        navigator.clipboard.writeText(command).then(() => {
+            e.target.textContent = "Copied!";
+            setTimeout(() => e.target.textContent = "Copy", 1200);
+        });
+    });
+    </script>
 </body>
 </html>
 
