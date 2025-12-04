@@ -10,8 +10,8 @@
 
     <header>
         <div class="container">
-            <h1>KCD Suisse Romande</h1>
-            <div class="subtitle">Workshop: Observability-Driven Development</div>
+            <h1>KCD Suisse Romande 2025</h1>
+            <div class="subtitle">When 99.999% Isn't Enough: Exploring Swisscom Kubernetes and Particle Accelerator Observability</div>
         </div>
     </header>
 
@@ -36,7 +36,7 @@
                     <p><em>Keep this page open — you will need it for the next steps.</em></p>
                 </div>
             </div>
-            
+
             <div class="step">
                 <div class="step-content">
                     <h3>Create Your Kubernetes Cluster</h3>
@@ -45,7 +45,7 @@
 
                     <p>
                         All the steps for this phase are already documented in the workshop slides.
-                        Please download the PDF and follow the instructions from 
+                        Please download the PDF and follow the instructions from
                         <strong>slide 16 to slide 37</strong>, which walk you through the entire
                         cluster creation process.
                     </p>
@@ -122,13 +122,13 @@ kube-system     metrics-server-7bd6766f9d-5grc8         1/1     Running   0     
             <div class="card">
                 <h3 style="margin-top:0;">⚛️ Openmetrics Particle Accelerator Lab</h3>
                 <p>
-                    This project is a small experimental “lab” designed to demonstrate how easily 
-                    OpenMetrics metrics can be integrated into a business application for 
+                    This project is a small experimental “lab” designed to demonstrate how easily
+                    OpenMetrics metrics can be integrated into a business application for
                     Prometheus monitoring.
                 </p>
                 <p>
-                    It simulates a very simple particle accelerator where a particle 
-                    (represented by a moving ball) travels around a ring and receives periodic 
+                    It simulates a very simple particle accelerator where a particle
+                    (represented by a moving ball) travels around a ring and receives periodic
                     “kicks” to accelerate and reach (almost) the speed of light.
                 </p>
                 <ul>
@@ -136,12 +136,12 @@ kube-system     metrics-server-7bd6766f9d-5grc8         1/1     Running   0     
                     <li>If the experiment runs too long, it automatically <strong>shuts down</strong>. 🛑</li>
                 </ul>
                 <p>
-                    The goal is to tune the <span class="inline-code">KICK_POWER</span> variable to reach the optimal speed 
+                    The goal is to tune the <span class="inline-code">KICK_POWER</span> variable to reach the optimal speed
                     without triggering an overload.
                 </p>
                 <p>
-                    The project illustrates how operational metrics can be embedded directly into 
-                    an application’s logic — allowing developers to observe its internal state and 
+                    The project illustrates how operational metrics can be embedded directly into
+                    an application’s logic — allowing developers to observe its internal state and
                     performance through Prometheus.
                 </p>
             </div>
@@ -244,12 +244,12 @@ def kick():
 
                     <p>Useful references:</p>
                     <ul>
-                        <li>📘 Client library docs (Counter):  
+                        <li>📘 Client library docs (Counter):
                             <a target="_blank" href="https://prometheus.github.io/client_python/instrumenting/counter/">
                                 https://prometheus.github.io/client_python/instrumenting/counter/
                             </a>
                         </li>
-                        <li>🔍 Query your metric in Prometheus:  
+                        <li>🔍 Query your metric in Prometheus:
                             <a target="_blank" href="http://prometheus.127.0.0.1.nip.io:8080/query?g0.expr=kick_count">
                                 http://prometheus.127.0.0.1.nip.io:8080/query?g0.expr=kick_count
                             </a>
@@ -328,4 +328,3 @@ def kick():
     </script>
 </body>
 </html>
-
