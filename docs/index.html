@@ -301,8 +301,12 @@ def kick():
                     <pre><code>kubectl debug --profile=sysadmin $(kubectl get node -o name) -ti \
     --image=ghcr.io/inspektor-gadget/ig:latest -- \
     ig run trace_exec:latest \
-    --filter k8s.namespace==openmetrics-accelerator-lab
-            </code></pre>
+    --filter k8s.namespace==openmetrics-accelerator-lab</code></pre>
+
+<pre><code>kubectl debug --profile=sysadmin $(kubectl get node -o name) -ti \
+    --image=ghcr.io/inspektor-gadget/ig:latest -- \
+        ig run trace_tcp:latest --connect-only</code></pre>
+
 
                     <p>This launches a privileged ephemeral debug pod and attaches the <code>trace_exec</code> gadget.</p>
                 </div>
